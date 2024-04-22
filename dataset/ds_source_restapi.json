@@ -1,0 +1,24 @@
+{
+	"name": "ds_source_restapi",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_SOURCE_API",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"pl_file_name": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "RestResource",
+		"typeProperties": {
+			"relativeUrl": {
+				"value": "@concat(dataset().pl_file_name,'.json')",
+				"type": "Expression"
+			}
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

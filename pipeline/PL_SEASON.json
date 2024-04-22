@@ -1,0 +1,78 @@
+{
+	"name": "PL_SEASON",
+	"properties": {
+		"activities": [
+			{
+				"name": "act_copy_for_seasons",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "RestSource",
+						"httpRequestTimeout": "00:01:40",
+						"requestInterval": "00.00:00:00.010",
+						"requestMethod": "GET",
+						"paginationRules": {
+							"supportRFC5988": "true"
+						}
+					},
+					"sink": {
+						"type": "JsonSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "JsonWriteSettings"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "ds_source_restapi",
+						"type": "DatasetReference",
+						"parameters": {
+							"pl_file_name": {
+								"value": "@pipeline().parameters.pl_file_para",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ds_sink_adls",
+						"type": "DatasetReference",
+						"parameters": {
+							"pl_dir_path": {
+								"value": "@concat(concat(concat('bronze/',pipeline().parameters.pl_file_para),'/'),formatDateTime(utcnow(),'yyyy-MM-dd'))",
+								"type": "Expression"
+							},
+							"pl_file_path": {
+								"value": "@concat(pipeline().parameters.pl_file_para,'.json')",
+								"type": "Expression"
+							}
+						}
+					}
+				]
+			}
+		],
+		"parameters": {
+			"pl_file_para": {
+				"type": "string",
+				"defaultValue": "seasons"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2024-04-22T14:08:25Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

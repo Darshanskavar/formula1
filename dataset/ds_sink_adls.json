@@ -1,0 +1,35 @@
+{
+	"name": "ds_sink_adls",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_SINK_ADLS",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"pl_dir_path": {
+				"type": "String"
+			},
+			"pl_file_path": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@dataset().pl_file_path",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@dataset().pl_dir_path",
+					"type": "Expression"
+				},
+				"fileSystem": "f1racing"
+			}
+		},
+		"schema": {}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
