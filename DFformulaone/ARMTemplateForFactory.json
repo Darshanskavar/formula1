@@ -1,0 +1,464 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "DFformulaone"
+		},
+		"LS_SINK_ADLS_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'LS_SINK_ADLS'"
+		},
+		"LS_SINK_ADLS_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://adlsformula.dfs.core.windows.net/"
+		},
+		"LS_SOURCE_API_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "http://ergast.com/api/f1/"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_circuits')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "act_copy_circuits",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "RestSource",
+								"httpRequestTimeout": "00:01:40",
+								"requestInterval": "00.00:00:00.010",
+								"requestMethod": "GET",
+								"paginationRules": {
+									"supportRFC5988": "true"
+								}
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "ds_source_restapi",
+								"type": "DatasetReference",
+								"parameters": {
+									"pl_file_name": {
+										"value": "@pipeline().parameters.pl_para_circuits",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ds_sink_adls",
+								"type": "DatasetReference",
+								"parameters": {
+									"pl_dir_path": {
+										"value": "@concat(concat(concat('bronze/',pipeline().parameters.pl_para_circuits),'/'),formatDateTime(utcnow(),'yyyy-MM-dd'))",
+										"type": "Expression"
+									},
+									"pl_file_path": {
+										"value": "@concat(pipeline().parameters.pl_para_circuits,'.json')",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"pl_para_circuits": {
+						"type": "string",
+						"defaultValue": "circuits"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/ds_source_restapi')]",
+				"[concat(variables('factoryId'), '/datasets/ds_sink_adls')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_constructors')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "act_copy_constructors",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "RestSource",
+								"httpRequestTimeout": "00:01:40",
+								"requestInterval": "00.00:00:00.010",
+								"requestMethod": "GET",
+								"paginationRules": {
+									"supportRFC5988": "true"
+								}
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "ds_source_restapi",
+								"type": "DatasetReference",
+								"parameters": {
+									"pl_file_name": {
+										"value": "@pipeline().parameters.pl_para_constructors",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ds_sink_adls",
+								"type": "DatasetReference",
+								"parameters": {
+									"pl_dir_path": {
+										"value": "@concat(concat(concat('bronze/',pipeline().parameters.pl_para_constructors),'/'),formatDateTime(utcnow(),'yyyy-MM-dd'))",
+										"type": "Expression"
+									},
+									"pl_file_path": {
+										"value": "@concat(pipeline().parameters.pl_para_constructors,'.json')",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"pl_para_constructors": {
+						"type": "string",
+						"defaultValue": "constructors"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/ds_source_restapi')]",
+				"[concat(variables('factoryId'), '/datasets/ds_sink_adls')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_drivers')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "act_copy_drivers",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "RestSource",
+								"httpRequestTimeout": "00:01:40",
+								"requestInterval": "00.00:00:00.010",
+								"requestMethod": "GET",
+								"paginationRules": {
+									"supportRFC5988": "true"
+								}
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "ds_source_restapi",
+								"type": "DatasetReference",
+								"parameters": {
+									"pl_file_name": "drivers"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ds_sink_adls",
+								"type": "DatasetReference",
+								"parameters": {
+									"pl_dir_path": {
+										"value": "@concat(concat(concat('bronze/',pipeline().parameters.pl_para_drivers),'/'),formatDateTime(utcnow(),'yyyy-MM-dd'))",
+										"type": "Expression"
+									},
+									"pl_file_path": {
+										"value": "@concat(pipeline().parameters.pl_para_drivers,'.json')",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"pl_para_drivers": {
+						"type": "string"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/ds_source_restapi')]",
+				"[concat(variables('factoryId'), '/datasets/ds_sink_adls')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_season')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "act_copy_for_seasons",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "RestSource",
+								"httpRequestTimeout": "00:01:40",
+								"requestInterval": "00.00:00:00.010",
+								"requestMethod": "GET",
+								"paginationRules": {
+									"supportRFC5988": "true"
+								}
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "ds_source_restapi",
+								"type": "DatasetReference",
+								"parameters": {
+									"pl_file_name": {
+										"value": "@pipeline().parameters.pl_file_para",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ds_sink_adls",
+								"type": "DatasetReference",
+								"parameters": {
+									"pl_dir_path": {
+										"value": "@concat(concat(concat('bronze/',pipeline().parameters.pl_file_para),'/'),formatDateTime(utcnow(),'yyyy-MM-dd'))",
+										"type": "Expression"
+									},
+									"pl_file_path": {
+										"value": "@concat(pipeline().parameters.pl_file_para,'.json')",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"pl_file_para": {
+						"type": "string",
+						"defaultValue": "seasons"
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2024-04-22T14:08:25Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/ds_source_restapi')]",
+				"[concat(variables('factoryId'), '/datasets/ds_sink_adls')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_sink_adls')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_SINK_ADLS",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"pl_dir_path": {
+						"type": "String"
+					},
+					"pl_file_path": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@dataset().pl_file_path",
+							"type": "Expression"
+						},
+						"folderPath": {
+							"value": "@dataset().pl_dir_path",
+							"type": "Expression"
+						},
+						"fileSystem": "f1racing"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_SINK_ADLS')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_source_restapi')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_SOURCE_API",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"pl_file_name": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "RestResource",
+				"typeProperties": {
+					"relativeUrl": {
+						"value": "@concat(dataset().pl_file_name,'.json')",
+						"type": "Expression"
+					}
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_SOURCE_API')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LS_SINK_ADLS')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('LS_SINK_ADLS_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('LS_SINK_ADLS_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LS_SOURCE_API')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "RestService",
+				"typeProperties": {
+					"url": "[parameters('LS_SOURCE_API_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Anonymous"
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}
