@@ -1,9 +1,9 @@
 {
-	"name": "pl_season",
+	"name": "pl_circuits",
 	"properties": {
 		"activities": [
 			{
-				"name": "act_copy_for_seasons",
+				"name": "act_copy_circuits",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
@@ -41,7 +41,7 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"pl_file_name": {
-								"value": "@pipeline().parameters.pl_file_para",
+								"value": "@pipeline().parameters.pl_para_circuits",
 								"type": "Expression"
 							}
 						}
@@ -53,11 +53,11 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"pl_dir_path": {
-								"value": "@concat(concat(concat('bronze/',pipeline().parameters.pl_file_para),'/'),formatDateTime(utcnow(),'yyyy-MM-dd'))",
+								"value": "@concat(concat(concat('bronze/',pipeline().parameters.pl_para_circuits),'/'),formatDateTime(utcnow(),'yyyy-MM-dd'))",
 								"type": "Expression"
 							},
 							"pl_file_path": {
-								"value": "@concat(pipeline().parameters.pl_file_para,'.json')",
+								"value": "@concat(pipeline().parameters.pl_para_circuits,'.json')",
 								"type": "Expression"
 							}
 						}
@@ -66,13 +66,11 @@
 			}
 		],
 		"parameters": {
-			"pl_file_para": {
+			"pl_para_circuits": {
 				"type": "string",
-				"defaultValue": "seasons"
+				"defaultValue": "circuits"
 			}
 		},
-		"annotations": [],
-		"lastPublishTime": "2024-04-22T14:08:25Z"
-	},
-	"type": "Microsoft.DataFactory/factories/pipelines"
+		"annotations": []
+	}
 }
