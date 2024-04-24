@@ -14,7 +14,7 @@
 		"type": "RestResource",
 		"typeProperties": {
 			"relativeUrl": {
-				"value": "@concat(dataset().pl_file_name,'.json')",
+				"value": "@concat(concat(dataset().pl_file_name,'.json'),'?limit=10000')",
 				"type": "Expression"
 			}
 		},
