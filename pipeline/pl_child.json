@@ -1,0 +1,54 @@
+{
+	"name": "pl_child",
+	"properties": {
+		"activities": [
+			{
+				"name": "lookup_on_race",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"dataset": {
+						"referenceName": "ds_sink_adls",
+						"type": "DatasetReference",
+						"parameters": {
+							"pl_dir_path": {
+								"value": "@concat('bronze/races/',formatDateTime(utcnow(),'yyyy-MM-dd'))",
+								"type": "Expression"
+							},
+							"pl_file_path": {
+								"value": "@concat('bronze/races/',formatDateTime(utcnow(),'yyyy-MM-dd'))",
+								"type": "Expression"
+							}
+						}
+					}
+				}
+			}
+		],
+		"parameters": {
+			"season_year": {
+				"type": "string",
+				"defaultValue": "1950"
+			}
+		},
+		"annotations": []
+	}
+}
