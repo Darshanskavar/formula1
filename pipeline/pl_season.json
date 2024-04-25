@@ -192,6 +192,35 @@
 									}
 								}
 							]
+						},
+						{
+							"name": "execute_pl_child",
+							"type": "ExecutePipeline",
+							"dependsOn": [
+								{
+									"activity": "act_copy_for_race",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"pipeline": {
+									"referenceName": "pl_child",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": true,
+								"parameters": {
+									"season_year": {
+										"value": "@item().season",
+										"type": "Expression"
+									}
+								}
+							}
 						}
 					]
 				}
